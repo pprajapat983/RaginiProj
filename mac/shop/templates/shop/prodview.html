@@ -1,0 +1,127 @@
+{% extends 'shop/basic.html' %}
+
+{% block title %} {{product.product_name}}- My Awesome Cart{% endblock %}
+{% load static %}
+{% block body %}
+
+
+<div class="container">
+	<div class="row my-4">
+		<div class="col-md-4">
+			<div class="row">
+				<img src="/media/{{product.image}}" width="150" height="200" alt="">
+				</div>
+				<div class="row">
+					<button class="btn btn-primary my-3 mx-3"> Buy now</button>
+					<button class="btn btn-primary my-3">
+            Add to Card
+            </button>
+				</div>
+			</div>
+			<div class="col-md-8">
+				<h3>{{product.product_name}}
+				</h5>
+				<p>{{product.desc}}</p>
+				<p>
+					<h4>Rs.{{product.price}} </h4>
+				</p>
+				<br>
+					<br>
+						<br>
+							<br>
+							</div>
+						</div>
+					</div>
+					<div class="container my-3">
+						<h2>Reviews</h2>
+						<hr>
+							<form action="/shop/productcomment/" method="post">
+        {% csrf_token %}
+        
+								<div class="form-group">
+									<label for="comment">
+										<span>
+											<h3>Please Tell us Your Feedbacks</h3>
+										</span>
+									</label>
+									<textarea class="form-control" name="comment" id="comment" rows="3"></textarea>
+								</div>
+								<input type="hidden" name="productSno" value="{{id}}">
+									<button type="submit" class="btn btn-primary">Submit</button>
+								</form>
+								<hr>
+									<!-- <div class="alert alert-dark" role="alert">-->
+									<!--</div>-->
+									<h2>Comments ({{comments.count}}) :</h2>
+									<hr>
+    {% for comment in comments %}
+    
+										<div class="row my-3 content-section">
+											<div class="col-md-1 ">
+												<img src="{% static 'shop/back.jpg' %}" class="rounded mx-auto d-block w-100" alt="...">
+												</div>
+												<div class="col-md-11">
+													<b> {{comment.user}}</b> @ {{comment.timestamp}}
+            
+													<div> 
+            {{ comment.comment|safe }}
+            </div>
+													<a class="btn btn-sm btn-primary my-2" data-toggle="collapse" href="#replyBox{{comment.sno}}" role="button" aria-expanded="false" aria-controls="replyBox{{comment.sno}}">
+    Reply
+  </a>
+													<div class="collapse" id="replyBox{{comment.sno}}">
+														<div class="card card-body">
+															<form action="/postcomment/" method="post">
+        {% csrf_token %}
+        
+																<div class="form-group">
+																	<label for="comment">
+																		<span>
+																			<h6>Add a reply</h6>
+																		</span>
+																	</label>
+																	<textarea class="form-control" name="comment" id="reply" rows="3"></textarea>
+																</div>
+																<input type="hidden" name="parentSno" value="{{comment.sno}}">
+																	<button type="submit" class="btn btn-primary">Submit</button>
+																</form>
+															</div>
+														</div>
+													</div>
+{% endfor %}
+
+ 
+{% endblock %}
+{% block js %}
+
+													<script>
+console.log('working');
+if(localStorage.getItem('cart') == null){
+var cart = {};
+}
+else
+{
+cart = JSON.parse(localStorage.getItem('cart'));
+document.getElementById('cart').innerHTML = Object.keys(cart).length;
+}
+$('.cart').click(function(){
+console.log('clicked');
+var idstr = this.id.toString();
+console.log(idstr);
+if (cart[idstr] !=undefined){
+cart[idstr] = cart[idstr] + 1;
+}
+else
+{
+cart[idstr] = 1;
+}
+console.log(cart);
+localStorage.setItem('cart', JSON.stringify(cart));
+document.getElementById('cart').innerHTML = Object.keys(cart).length;
+});
+$('#popcart').popover();
+document.getElementById("popcart").setAttribute('data-content', '
+														<h5>Cart for your items in my shopping cart</h5>');
+
+													</script>
+{% endblock %}
