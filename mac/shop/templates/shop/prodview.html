@@ -54,7 +54,17 @@
 									<!--</div>-->
 									<h2>Comments ({{comments.count}}) :</h2>
 									<hr>
+									<div class= "row">
+									<div style="background-color:#4dff4d" class="col-md-3">
+									<b>{{pcount}} % </b>
+									</div>   
+									<div style="background-color:#ff471a" class="col-md-3">
+									<b>{{ncount}} % </b>
+									</div>
+									
+									</div>
     {% for comment in comments %}
+	
     
 										<div class="row my-3 content-section">
 											<div class="col-md-1 ">

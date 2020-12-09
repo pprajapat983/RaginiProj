@@ -11,6 +11,7 @@ class product(models.Model):
     price=models.IntegerField(default=0)
     pub_date=models.DateField()
     image=models.ImageField(upload_to="shop/images",default="")
+    positiveness=models.IntegerField(default=0)
 
     def __str__(self):
         return self.product_name
@@ -56,6 +57,7 @@ class productcomment(models.Model):
     user=models.ForeignKey(User,on_delete=models.CASCADE)
     comment=models.TextField()
     parent=models.ForeignKey('self',on_delete=models.CASCADE,null=True)
+    pos=models.IntegerField(default=0)
     timestamp=models.DateTimeField(default=timezone.now)
 
     def __str__(self):

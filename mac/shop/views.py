@@ -162,7 +162,21 @@ def productView(request, myid):
     # fetch the product using id
     products = product.objects.filter(id=myid)
     comments=productcomment.objects.filter(product=myid)
-    return render(request, "shop/prodview.html", {'product': products[0],'id':myid,'comments':comments})
+    poscount=0
+    count=0
+    for comment in comments:
+        if comment.pos==1:
+            poscount=poscount+1
+        count=count+1        
+    if count==0:
+        pcount=0
+        ncount=0
+    else:        
+        pcount=int((poscount*100)/count)
+        print(poscount)
+        print(count)
+        ncount=100-pcount 
+    return render(request, "shop/prodview.html", {'product': products[0],'id':myid,'comments':comments,'pcount':pcount,'ncount':ncount})
 
 
 def checkout(request):
@@ -224,18 +238,103 @@ def handlerequest(request):
 
 
 
+# def productcom(request):
+#     if request.method=='POST':
+#         comment=request.POST.get('comment')
+#         user=request.user
+#         productSno=request.POST.get('productSno')
+#         prod=product.objects.get(id=productSno)
+
+#         comment=productcomment(product=prod,user=user,comment=comment)
+#         comment.save()
+#         messages.success(request,"Thanks for your feedback:)")
+
+
+        # return redirect(f'/shop/products/{prod.id}' )
+
+
+
+
+
+
+
+
+
+
 def productcom(request):
     if request.method=='POST':
         comment=request.POST.get('comment')
         user=request.user
+
         productSno=request.POST.get('productSno')
         prod=product.objects.get(id=productSno)
+         
 
-        comment=productcomment(product=prod,user=user,comment=comment)
+        # parentSno=request.POST.get('parentSno')
+        # if parentSno=="":
+        # Model_Path='sentiment_model_lstm.h5'
+        
+        from sklearn.linear_model import LogisticRegression
+        import pickle
+
+
+        # load the vectorizer
+        loaded_vectorizer = pickle.load(open('vectorizer.pickle', 'rb'))
+
+        # load the model
+        loaded_model = pickle.load(open('classification.model', 'rb'))
+
+
+        #     # import pandas as pd
+        #     # import nltk
+        #     # import re
+        # from keras.models import load_model
+        #     # import numpy as np
+        #     # from nltk.stem.porter import PorterStemmer
+        #     # from nltk.corpus import stopwords
+        #     #import tensorflow as tf
+        #     # from tensorflow.keras.layers import Embedding
+        # from tensorflow.keras.preprocessing.sequence import pad_sequences
+        #     # from tensorflow.keras.models import Sequential
+        # from tensorflow.keras.preprocessing.text import one_hot
+        #     # from tensorflow.keras.layers import LSTM
+        #     # from tensorflow.keras.layers import Dense
+        #     #w = "good phones and best sound.Good for person who are not having time from office."
+        #     ### Vocabulary size
+        # voc_size = 5000
+        # model = load_model(Model_Path)
+        # onehot_rep = [one_hot(comment, voc_size)]
+
+        # sent_length = 20
+        # embed = pad_sequences(onehot_rep, padding='pre', maxlen=sent_length)
+        # print(embed)
+        # a=model.predict_classes(embed)
+        # print(a)
+        a=loaded_model.predict(loaded_vectorizer.transform([comment]).toarray())
+
+
+            # comment=ShopComment(comment=comment,user=user)
+
+        # comment = productcomment(product=prod,comment=comment, user=user)
+        # comment.save()
+        pos=0
+        if a==[0]:
+            messages.warning(request,f'Sorry for the inconvenience caused :( ')
+        else:
+            # if prod.positiveness==0:
+            pos=1
+            # prod.positiveness=1
+            # else:
+                # prod.positiveness=prod.positiveness+1    
+            messages.success(request, f'Thanks for the positive feedback :)')
+        # else:
+        #     parent=ShopComment.objects.get(sno=parentSno)
+        #     comment = ShopComment(product=prod,comment=comment, user=user,parent=parent)
+        #     comment.save()
+        #     messages.success(request, f'Your reply has been successfully created ... ')
+        comment = productcomment(product=prod,comment=comment, user=user,pos=pos)
         comment.save()
-        messages.success(request,"Thanks for your feedback:)")
-
 
         return redirect(f'/shop/products/{prod.id}' )
-
-
+    else:
+        return redirect('/shop/')
