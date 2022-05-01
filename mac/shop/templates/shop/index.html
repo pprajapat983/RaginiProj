@@ -70,11 +70,13 @@ padding-right: 0;
                 <p class="card-text">{{i.desc|slice:"0:53"}}...</p>
                 <h5 class="card-title">Price:<span id="pricepr{{i.id}}" >{{i.price}}
                   </span></h5>
-                <span id="divpr{{i.id}}" class="divpr">
+                <div class="row">  
+                <span id="divpr{{i.id}}" class="divpr mx-2 row">
                   <button id="pr{{i.id}}" class="btn btn-primary cart">Add to Cart</button>
                 </span>
                 <a href="/shop/products/{{i.id}}"><button id="qv{{i.id}}"
                     class="btn btn-primary cart">QuickView</button></a>
+                  </div>    
               </div>
             </div>
           </div>
@@ -139,7 +141,7 @@ padding-right: 0;
   function updatePopover(cart) {
     console.log('We are inside updatePopover');
     var popStr = "";
-    popStr = popStr + "<h5> Cart for your items in my shopping cart </h5><div class='mx-2 my-2'>";
+    popStr = popStr + "<h5> Cart for your items in my shopping cart </h5><div class='mx-2 my-2 row'>";
     var i = 1;
     for (var item in cart) {
       popStr = popStr + "<b>" + i + "</b>. ";
@@ -147,7 +149,7 @@ padding-right: 0;
       i = i + 1;
     }
 
-    popStr = popStr + "</div> <a href= '/shop/checkout'> <button class='btn btn-primary' id='clearCart'> Checkout </button></a> <button class='btn btn-primary' onclick='clearCart()' id='clearCart'> Clear Cart </button>"
+    popStr = popStr + "</div> <div class='row'> <a href= '/shop/checkout'> <button class='btn btn-primary mx-2' id='clearCart'> Checkout </button></a> <button class='btn btn-primary' onclick='clearCart()' id='clearCart'> Clear Cart </button></div>"
     console.log(popStr);
     document.getElementById('popcart').setAttribute('data-content', popStr);
     $('#popcart').popover('show');
